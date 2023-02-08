@@ -2,18 +2,12 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Api product 1",
-    "description": "",
     "version": "0.0.0"
   },
   "servers": [
     {
-      "url": "/authentication",
-      "description": ""
-    },
-    {
-      "url": "/yolo",
-      "description": ""
-    },
+      "url": "https://customdomain.com"
+    }
   ],
   "paths": {
     "/users/{id}": {
@@ -55,19 +49,14 @@
             "in": "path",
             "description": "Resource identifier",
             "required": true,
-            "deprecated": false,
-            "allowEmptyValue": false,
+            "explode": false,
             "schema": {
               "type": "string"
             },
-            "style": "simple",
-            "explode": false,
-            "allowReserved": false
+            "style": "simple"
           }
-        ],
-        "deprecated": false
-      },
-      "parameters": []
+        ]
+      }
     }
   },
   "components": {
@@ -227,7 +216,6 @@
       },
       "User-user.read_address.read": {
         "type": "object",
-        "description": "",
         "required": [
           "email",
           "salutation",
@@ -285,7 +273,6 @@
       },
       "User.jsonld-user.read_address.read": {
         "type": "object",
-        "description": "",
         "required": [
           "email",
           "salutation",
@@ -375,24 +362,13 @@
             ]
           }
         }
-      },
+      }
     },
-    "responses": {},
-    "parameters": {},
-    "examples": {},
-    "requestBodies": {},
-    "headers": {},
     "securitySchemes": {
       "secure": {
         "type": "http",
         "scheme": "basic"
       }
     }
-  },
-  "security": [
-    {
-      "secure": []
-    }
-  ],
-  "tags": []
+  }
 }
