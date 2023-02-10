@@ -368,9 +368,13 @@ func (w *Watcher) buildRoute(name string, c *catalog.Catalog) http.Handler {
 }
 
 func overrideServersAndSecurity(oas *openapi3.T, c *catalog.Catalog) {
-	oas.Servers = openapi3.Servers{{URL: "https://" + c.Domain}}
-	if len(c.CustomDomains) != 0 {
-		oas.Servers = openapi3.Servers{{URL: "https://" + c.CustomDomains[0].Name}}
+	oas.Servers = nil
+	for _, domain := range c.CustomDomains {
+		oas.Servers = append(oas.Servers, &openapi3.Server{URL: "https://" + domain.Name})
+	}
+
+	if len(oas.Servers) == 0 {
+		oas.Servers = openapi3.Servers{{URL: "https://" + c.Domain}}
 	}
 
 	oas.Security = nil

@@ -312,7 +312,7 @@ func TestWatcher_OnUpdate_getSpec(t *testing.T) {
 			OpenAPISpecURL: srv.URL,
 		},
 	}
-	catalog.Status.CustomDomains = []string{"customdomain.com"}
+	catalog.Status.CustomDomains = []string{"customdomain.com", "secondcustomdomain.com"}
 	catalog.Status.Services = append(catalog.Status.Services, serviceStatuses...)
 	catalog.Status.Domain = generatedDomain
 
