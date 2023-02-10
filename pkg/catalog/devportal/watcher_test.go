@@ -276,7 +276,7 @@ func TestWatcher_OnUpdate_getSpec(t *testing.T) {
 	require.NoError(t, err)
 
 	srv := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		_, err := rw.Write(oasSpec)
+		_, err = rw.Write(oasSpec)
 		require.NoError(t, err)
 	}))
 
