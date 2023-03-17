@@ -84,7 +84,7 @@ func TestCollection_Review_createOperation(t *testing.T) {
 				Name:       "collection-name",
 				Labels:     map[string]string{"key": "value"},
 				PathPrefix: "prefix",
-				Selector: metav1.LabelSelector{
+				APISelector: metav1.LabelSelector{
 					MatchLabels: map[string]string{"area": "products"},
 					MatchExpressions: []metav1.LabelSelectorRequirement{
 						{
@@ -132,7 +132,7 @@ func TestCollection_Review_createOperation(t *testing.T) {
 				Name:       "collection-name",
 				Labels:     map[string]string{"key": "value"},
 				PathPrefix: "prefix",
-				Selector: metav1.LabelSelector{
+				APISelector: metav1.LabelSelector{
 					MatchLabels: map[string]string{"area": "products"},
 					MatchExpressions: []metav1.LabelSelectorRequirement{
 						{
@@ -255,7 +255,7 @@ func TestCollection_Review_updateOperation(t *testing.T) {
 			wantUpdateReq: &platform.UpdateCollectionReq{
 				Labels:     map[string]string{"key": "newValue", "foo": "bar"},
 				PathPrefix: "newPrefix",
-				Selector: metav1.LabelSelector{
+				APISelector: metav1.LabelSelector{
 					MatchLabels: map[string]string{"area": "users"},
 					MatchExpressions: []metav1.LabelSelectorRequirement{
 						{
@@ -280,7 +280,7 @@ func TestCollection_Review_updateOperation(t *testing.T) {
 			wantUpdateReq: &platform.UpdateCollectionReq{
 				Labels:     map[string]string{"key": "newValue", "foo": "bar"},
 				PathPrefix: "newPrefix",
-				Selector: metav1.LabelSelector{
+				APISelector: metav1.LabelSelector{
 					MatchLabels: map[string]string{"area": "users"},
 					MatchExpressions: []metav1.LabelSelectorRequirement{
 						{
