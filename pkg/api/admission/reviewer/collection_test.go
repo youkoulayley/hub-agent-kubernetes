@@ -97,9 +97,10 @@ func TestCollection_Review_createOperation(t *testing.T) {
 			},
 			wantPatch: mustMarshal(t, []patch{
 				{Op: "replace", Path: "/status", Value: hubv1alpha1.APICollectionStatus{
-					Version:  "version-1",
-					SyncedAt: now,
-					Hash:     "XrYSYUqKbEn+omNot2rSM9GTxMs=",
+					APISelector: "area=products,product in (books,toys)",
+					Version:     "version-1",
+					SyncedAt:    now,
+					Hash:        "XrYSYUqKbEn+omNot2rSM9GTxMs=",
 				}},
 			}),
 		},
@@ -268,9 +269,10 @@ func TestCollection_Review_updateOperation(t *testing.T) {
 			},
 			wantPatch: mustMarshal(t, []patch{
 				{Op: "replace", Path: "/status", Value: hubv1alpha1.APICollectionStatus{
-					Version:  "version-2",
-					SyncedAt: now,
-					Hash:     "K93Yd3LNurYamfSBMYDock3kfJw=",
+					APISelector: "area=users,role notin (admin)",
+					Version:     "version-2",
+					SyncedAt:    now,
+					Hash:        "K93Yd3LNurYamfSBMYDock3kfJw=",
 				}},
 			}),
 		},
