@@ -69,8 +69,10 @@ func NewFetcher(ctx context.Context, clientSet kclientset.Interface, traefikClie
 func watchAll(ctx context.Context, clientSet kclientset.Interface, traefikClientSet traefikclientset.Interface, hubClientSet hubclientset.Interface, serverVersion string) (*Fetcher, error) {
 	kubernetesFactory := kinformers.NewSharedInformerFactoryWithOptions(clientSet, 5*time.Minute)
 
+	kubernetesFactory.Core().V1().Nodes().Informer()
 	kubernetesFactory.Core().V1().Pods().Informer()
 	kubernetesFactory.Core().V1().Services().Informer()
+	kubernetesFactory.Discovery().V1().EndpointSlices().Informer()
 
 	if kubevers.SupportsNetV1IngressClasses(serverVersion) {
 		kubernetesFactory.Networking().V1().IngressClasses().Informer()
@@ -195,6 +197,11 @@ func (f *Fetcher) FetchState() (*Cluster, error) {
 	}
 
 	cluster.APIGateways, err = f.getAPIGateways()
+	if err != nil {
+		return nil, err
+	}
+
+	cluster.Nodes, err = f.getNodes()
 	if err != nil {
 		return nil, err
 	}

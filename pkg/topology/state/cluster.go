@@ -37,6 +37,7 @@ type Cluster struct {
 	APICollections        map[string]*APICollection       `json:"apiCollections"`
 	APIPortals            map[string]*APIPortal           `json:"apiPortals"`
 	APIGateways           map[string]*APIGateway          `json:"apiGateways"`
+	Nodes                 Nodes                           `json:"nodes"`
 }
 
 // ResourceMeta represents the metadata which identify a Kubernetes resource.
@@ -350,4 +351,10 @@ type APIGateway struct {
 	APIAccesses   []string `json:"apiAccesses,omitempty"`
 	CustomDomains []string `json:"customDomains,omitempty"`
 	HubDomain     string   `json:"hubDomain"`
+}
+
+// Nodes holds the number of nodes running Services exposed by APIs and the total number of nodes in the cluster.
+type Nodes struct {
+	RunningAPIs int `json:"runningApis"`
+	Total       int `json:"total"`
 }
