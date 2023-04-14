@@ -13,8 +13,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { rest } from 'msw'
+
 import api from './api.json'
 import collectionApi from './collection-api.json'
+import tokens from './tokens.json'
+
+const waitAsync = (seconds: number) => new Promise((res) => setTimeout(res, seconds * 1000))
 
 export const handlers = [
   rest.post('/login', (req, res, ctx) => {
@@ -103,6 +107,66 @@ export const handlers = [
     // const headers = req.headers
     // if (headers.get('Authorization')) {
     return res(ctx.status(200), ctx.json(collectionApi))
+    // } else {
+    //   return res(
+    //     ctx.status(401),
+    //     ctx.json({
+    //       errorMessage: 'Unauthorized',
+    //     }),
+    //   )
+    // }
+  }),
+
+  rest.get('/api/:portalName/tokens', async (_, res, ctx) => {
+    // const headers = req.headers
+    // if (headers.get('Authorization')) {
+    await waitAsync(1)
+    return res(ctx.status(200), ctx.json(tokens))
+    // } else {
+    //   return res(
+    //     ctx.status(401),
+    //     ctx.json({
+    //       errorMessage: 'Unauthorized',
+    //     }),
+    //   )
+    // }
+  }),
+
+  rest.post('/api/:portalName/tokens', async (_, res, ctx) => {
+    // const headers = req.headers
+    // if (headers.get('Authorization')) {
+    await waitAsync(1)
+    return res(ctx.status(200), ctx.json({ token: `${+new Date()}` }))
+    // } else {
+    //   return res(
+    //     ctx.status(401),
+    //     ctx.json({
+    //       errorMessage: 'Unauthorized',
+    //     }),
+    //   )
+    // }
+  }),
+
+  rest.post('/api/:portalName/tokens/suspend', async (_, res, ctx) => {
+    // const headers = req.headers
+    // if (headers.get('Authorization')) {
+    await waitAsync(1)
+    return res(ctx.status(200))
+    // } else {
+    //   return res(
+    //     ctx.status(401),
+    //     ctx.json({
+    //       errorMessage: 'Unauthorized',
+    //     }),
+    //   )
+    // }
+  }),
+
+  rest.delete('/api/:portalName/tokens', async (_, res, ctx) => {
+    // const headers = req.headers
+    // if (headers.get('Authorization')) {
+    await waitAsync(1)
+    return res(ctx.status(204))
     // } else {
     //   return res(
     //     ctx.status(401),

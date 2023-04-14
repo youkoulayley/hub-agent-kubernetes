@@ -19,8 +19,12 @@ import { BrowserRouter, Navigate, Route, Routes as RouterRoutes } from 'react-ro
 import API from 'pages/API'
 import { HelmetProvider } from 'react-helmet-async'
 import { QueryClientProvider, QueryClient } from 'react-query'
+
+import ToastPool from 'components/ToastPool'
+import { ToastProvider } from 'context/toasts'
 import { useAPIs } from 'hooks/use-apis'
 import EmptyState from 'pages/EmptyState'
+import Settings from 'pages/Settings'
 
 const queryClient = new QueryClient()
 
@@ -89,6 +93,14 @@ const Routes = () => {
           </PageLayout>
         }
       />
+      <Route
+        path="/settings"
+        element={
+          <PageLayout hasCard={false}>
+            <Settings />
+          </PageLayout>
+        }
+      />
     </RouterRoutes>
   )
 }
@@ -99,15 +111,20 @@ const App = () => {
   }, [])
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <HelmetProvider>
-        <FaencyProvider>
-          <BrowserRouter>
-            <Routes />
-          </BrowserRouter>
-        </FaencyProvider>
-      </HelmetProvider>
-    </QueryClientProvider>
+    <ToastProvider>
+      <QueryClientProvider client={queryClient}>
+        <HelmetProvider>
+          <FaencyProvider>
+            <BrowserRouter>
+              <>
+                <Routes />
+                <ToastPool />
+              </>
+            </BrowserRouter>
+          </FaencyProvider>
+        </HelmetProvider>
+      </QueryClientProvider>
+    </ToastProvider>
   )
 }
 

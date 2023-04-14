@@ -13,7 +13,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 import React from 'react'
-import { Card, Container, Flex, H1, Text, VariantProps, CSS } from '@traefiklabs/faency'
+import { Box, Card, Container, Flex, H1, Text, VariantProps, CSS } from '@traefiklabs/faency'
 import { Helmet } from 'react-helmet-async'
 
 import SideNavbar from 'components/SideNavbar'
@@ -24,6 +24,7 @@ const { portalDescription, portalTitle } = getInjectedValues()
 type Props = {
   title?: string
   children?: React.ReactNode
+  hasCard?: boolean
   noGutter?: boolean
   containerSize?: VariantProps<typeof Container>['size']
   maxWidth?: CSS['maxWidth']
@@ -33,6 +34,7 @@ type Props = {
 const PageLayout = ({
   children,
   title,
+  hasCard = true,
   noGutter = false,
   containerSize = '3',
   maxWidth,
@@ -66,7 +68,7 @@ const PageLayout = ({
           css={{
             backgroundColor: '$gray2',
             flex: 1,
-            height: '100vh',
+            height: 'calc(100vh - 58px)',
             overflowY: 'auto',
             position: 'relative',
             py: '$3',
@@ -86,7 +88,11 @@ const PageLayout = ({
               }}
             >
               <Flex direction="column" css={{ flex: 1 }}>
-                <Card css={{ backgroundColor: 'white' }}>{children}</Card>
+                {hasCard ? (
+                  <Card css={{ backgroundColor: 'white' }}>{children}</Card>
+                ) : (
+                  <Box css={{ p: '$3' }}>{children}</Box>
+                )}
               </Flex>
               {/* <Footer /> */}
             </Container>

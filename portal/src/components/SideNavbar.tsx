@@ -18,17 +18,17 @@ import {
   NavigationContainer,
   H3,
   Flex,
+  NavigationItem,
   NavigationTreeContainer,
   NavigationTreeItem as FaencyNavTreeItem,
 } from '@traefiklabs/faency'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { useAPIs } from 'hooks/use-apis'
+import { FaCog, FaFolder, FaFolderOpen, FaFileAlt } from 'react-icons/fa'
 // import { FiPower } from 'react-icons/fi'
-import { FaFolder, FaFolderOpen, FaFileAlt } from 'react-icons/fa'
+
 // import { useAuthDispatch, useAuthState } from 'context/auth'
 // import { handleLogOut } from 'context/auth/actions'
-
-// const CustomNavigationLink = NavigationLink as any
+import { useAPIs } from 'hooks/use-apis'
 
 const NavigationTreeItem = ({
   name,
@@ -84,7 +84,9 @@ const SideNavbar = () => {
   // const authDispatch = useAuthDispatch()
   // const { user } = useAuthState()
 
-  // const navigate = useNavigate()
+  const { pathname } = useLocation()
+
+  const navigate = useNavigate()
 
   const { collectionName } = useParams()
 
@@ -135,12 +137,19 @@ const SideNavbar = () => {
           </Flex>
         </>
       </NavigationContainer>
-      {/* <NavigationContainer>
-        <Text css={{ pl: '$3', fontWeight: '500' }}>{user?.username}</Text>
-        <CustomNavigationLink as="button" startAdornment={<FiPower />} onClick={() => handleLogOut(authDispatch)}>
+      <NavigationContainer>
+        <NavigationItem
+          active={pathname === '/settings'}
+          startAdornment={<FaCog />}
+          onClick={() => navigate('/settings')}
+        >
+          Settings
+        </NavigationItem>
+        {/* <Text css={{ pl: '$3', fontWeight: '500' }}>user?.username</Text>
+        <CustomNavigationLink as="button" startAdornment={<FiPower />} onClick={() => console.log('click')}>
           Log Out
-        </CustomNavigationLink>
-      </NavigationContainer> */}
+        </CustomNavigationLink> */}
+      </NavigationContainer>
     </NavigationDrawer>
   )
 }
