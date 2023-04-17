@@ -63,14 +63,17 @@ func TestWatcher_Run(t *testing.T) {
 					"products": {
 						APICollection: externalK8sObjects.APICollections["products"],
 						APIs: map[string]api{
-							"books@products-ns": {API: externalK8sObjects.APIs["books@products-ns"], authorizedGroups: []string{"supplier"}},
-							"toys@products-ns":  {API: externalK8sObjects.APIs["toys@products-ns"], authorizedGroups: []string{"supplier"}},
+							"books@products-ns": {API: externalK8sObjects.APIs["books@products-ns"], authorizedGroups: []string{"supplier", "admin"}},
+							"toys@products-ns":  {API: externalK8sObjects.APIs["toys@products-ns"], authorizedGroups: []string{"supplier", "admin"}},
 						},
-						authorizedGroups: []string{"supplier"},
+						authorizedGroups: []string{"supplier", "admin"},
 					},
 				},
 				APIs: map[string]api{
-					"search@default": {API: externalK8sObjects.APIs["search@default"], authorizedGroups: []string{"consumer"}},
+					"search@default":                   {API: externalK8sObjects.APIs["search@default"], authorizedGroups: []string{"consumer", "admin"}},
+					"books@products-ns":                {API: externalK8sObjects.APIs["books@products-ns"], authorizedGroups: []string{"admin"}},
+					"toys@products-ns":                 {API: externalK8sObjects.APIs["toys@products-ns"], authorizedGroups: []string{"admin"}},
+					"accounting-reports@accounting-ns": {API: internalK8sObjects.APIs["accounting-reports@accounting-ns"], authorizedGroups: []string{"admin"}},
 				},
 			},
 		},

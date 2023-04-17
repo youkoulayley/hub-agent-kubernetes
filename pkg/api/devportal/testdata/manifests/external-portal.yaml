@@ -25,6 +25,7 @@ spec:
   apiAccesses:
     - products
     - search
+    - all
   customDomains:
     - external.api.example.com
     - www.external.api.example.com
@@ -62,6 +63,19 @@ spec:
   apiSelector:
     matchLabels:
       area: search
+status:
+  hash: h
+
+---
+apiVersion: hub.traefik.io/v1alpha1
+kind: APIAccess
+metadata:
+  name: all
+spec:
+  groups:
+    - admin
+  apiCollectionSelector: {}
+  apiSelector: {}
 status:
   hash: h
 

@@ -327,18 +327,14 @@ func (w *Watcher) getPortals() ([]portal, error) {
 				return nil, fmt.Errorf("find APIAccess %q APIs: %w", apiAccessName, err)
 			}
 
-			for k := range apis {
-				g.APIs[k] = apis[k]
-			}
+			mergeAPIs(g.APIs, apis)
 
 			apiCollections, err := w.findCollections(apiAccess.Spec.APICollectionSelector, apiAccess.Spec.Groups)
 			if err != nil {
 				return nil, fmt.Errorf("find APIAccess %q APICollections: %w", apiAccessName, err)
 			}
 
-			for k := range apiCollections {
-				g.Collections[k] = apiCollections[k]
-			}
+			mergeCollections(g.Collections, apiCollections)
 		}
 
 		portals = append(portals, portal{
@@ -417,4 +413,66 @@ func (w *Watcher) findCollections(labelSelector *metav1.LabelSelector, authorize
 	}
 
 	return foundCollections, nil
+}
+
+func mergeAPIs(oldAPIs, newAPIs map[string]api) {
+	for k, a := range newAPIs {
+		if _, ok := oldAPIs[k]; !ok {
+			oldAPIs[k] = newAPIs[k]
+			continue
+		}
+
+		oldAPIs[k] = api{
+			API:              oldAPIs[k].API,
+			authorizedGroups: mergeGroups(oldAPIs[k].authorizedGroups, a.authorizedGroups),
+		}
+	}
+}
+
+func mergeCollections(oldCols, newCols map[string]collection) {
+	for collectionName, c := range newCols {
+		if _, ok := oldCols[collectionName]; !ok {
+			oldCols[collectionName] = newCols[collectionName]
+			continue
+		}
+
+		groups := mergeGroups(oldCols[collectionName].authorizedGroups, c.authorizedGroups)
+
+		apis := make(map[string]api)
+		for k, a := range oldCols[collectionName].APIs {
+			apis[k] = api{API: a.API, authorizedGroups: groups}
+		}
+
+		for k, a := range c.APIs {
+			if _, ok := apis[k]; !ok {
+				apis[k] = api{API: a.API, authorizedGroups: groups}
+			}
+		}
+
+		for apiNameNamespace, a := range oldCols[collectionName].APIs {
+			apis[apiNameNamespace] = api{API: a.API, authorizedGroups: groups}
+		}
+
+		oldCols[collectionName] = collection{
+			APICollection:    oldCols[collectionName].APICollection,
+			APIs:             apis,
+			authorizedGroups: groups,
+		}
+	}
+}
+
+func mergeGroups(a, b []string) []string {
+	uniq := make(map[string]struct{})
+	for _, v := range a {
+		uniq[v] = struct{}{}
+	}
+
+	for _, v := range b {
+		if _, ok := uniq[v]; !ok {
+			a = append(a, v)
+			uniq[v] = struct{}{}
+		}
+	}
+
+	return a
 }
