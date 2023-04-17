@@ -33,6 +33,7 @@ type PlatformClient interface {
 	CreateUserToken(ctx context.Context, userEmail, tokenName string) (string, error)
 	SuspendUserToken(ctx context.Context, userEmail, tokenName string, suspend bool) error
 	DeleteUserToken(ctx context.Context, userEmail, tokenName string) error
+	GetUserGroups(ctx context.Context, userEmail string) ([]string, error)
 }
 
 // Handler exposes both an API and a UI for a set of APIPortals.

@@ -37,10 +37,7 @@ import (
 	"github.com/traefik/hub-agent-kubernetes/pkg/platform"
 )
 
-const (
-	headerHubGroups = "Hub-Groups"
-	headerHubEmail  = "Hub-Email"
-)
+const headerHubEmail = "Hub-Email"
 
 // Security schemes used to secure the exposed APIs.
 const (
@@ -236,7 +233,16 @@ func (p *PortalAPI) handleDeleteToken(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (p *PortalAPI) handleListAPIs(rw http.ResponseWriter, r *http.Request) {
-	userGroups := r.Header.Values(headerHubGroups)
+	userEmail := r.Header.Get(headerHubEmail)
+	userGroups, err := p.platform.GetUserGroups(r.Context(), userEmail)
+	if err != nil {
+		log.Ctx(r.Context()).Error().Err(err).
+			Str("user_email", userEmail).
+			Msg("Unable to obtain user groups")
+
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusOK)
@@ -250,14 +256,23 @@ func (p *PortalAPI) handleListAPIs(rw http.ResponseWriter, r *http.Request) {
 
 func (p *PortalAPI) handleGetAPISpec(rw http.ResponseWriter, r *http.Request) {
 	apiNameNamespace := chi.URLParam(r, "api")
+	userEmail := r.Header.Get(headerHubEmail)
 
-	logger := log.With().
+	logger := log.Ctx(r.Context()).With().
 		Str("portal_name", p.portal.Name).
 		Str("api_name", apiNameNamespace).
+		Str("user_email", userEmail).
 		Logger()
 
+	userGroups, err := p.platform.GetUserGroups(r.Context(), userEmail)
+	if err != nil {
+		logger.Error().Err(err).Msg("Unable to obtain user groups")
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	a, ok := p.portal.Gateway.APIs[apiNameNamespace]
-	if !ok || !a.authorizes(r.Header.Values(headerHubGroups)) {
+	if !ok || !a.authorizes(userGroups) {
 		rw.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -268,15 +283,24 @@ func (p *PortalAPI) handleGetAPISpec(rw http.ResponseWriter, r *http.Request) {
 func (p *PortalAPI) handleGetCollectionAPISpec(rw http.ResponseWriter, r *http.Request) {
 	collectionName := chi.URLParam(r, "collection")
 	apiNameNamespace := chi.URLParam(r, "api")
+	userEmail := r.Header.Get(headerHubEmail)
 
-	logger := log.With().
+	logger := log.Ctx(r.Context()).With().
 		Str("portal_name", p.portal.Name).
 		Str("collection_name", collectionName).
 		Str("api_name", apiNameNamespace).
+		Str("user_email", userEmail).
 		Logger()
 
+	userGroups, err := p.platform.GetUserGroups(r.Context(), userEmail)
+	if err != nil {
+		logger.Error().Err(err).Msg("Unable to obtain user groups")
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	c, ok := p.portal.Gateway.Collections[collectionName]
-	if !ok || !c.authorizes(r.Header.Values(headerHubGroups)) {
+	if !ok || !c.authorizes(userGroups) {
 		rw.WriteHeader(http.StatusNotFound)
 		return
 	}

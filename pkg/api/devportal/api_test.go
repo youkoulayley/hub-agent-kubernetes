@@ -259,7 +259,6 @@ func TestPortalAPI_Router_listTokens(t *testing.T) {
 			require.NoError(t, err)
 
 			req.Header.Add("Hub-Email", testEmail)
-			req.Header.Add("Hub-Groups", "supplier")
 
 			resp, err := http.DefaultClient.Do(req)
 			require.NoError(t, err)
@@ -332,7 +331,6 @@ func TestPortalAPI_Router_createToken(t *testing.T) {
 			require.NoError(t, err)
 
 			req.Header.Add("Hub-Email", testEmail)
-			req.Header.Add("Hub-Groups", "supplier")
 
 			resp, err := http.DefaultClient.Do(req)
 			require.NoError(t, err)
@@ -403,7 +401,6 @@ func TestPortalAPI_Router_suspendToken(t *testing.T) {
 			require.NoError(t, err)
 
 			req.Header.Add("Hub-Email", testEmail)
-			req.Header.Add("Hub-Groups", "supplier")
 
 			resp, err := http.DefaultClient.Do(req)
 			require.NoError(t, err)
@@ -459,7 +456,6 @@ func TestPortalAPI_Router_deleteToken(t *testing.T) {
 			require.NoError(t, err)
 
 			req.Header.Add("Hub-Email", testEmail)
-			req.Header.Add("Hub-Groups", "supplier")
 
 			resp, err := http.DefaultClient.Do(req)
 			require.NoError(t, err)
@@ -470,7 +466,10 @@ func TestPortalAPI_Router_deleteToken(t *testing.T) {
 }
 
 func TestPortalAPI_Router_listAPIs(t *testing.T) {
-	a, err := NewPortalAPI(&testPortal, nil)
+	platformClient := newPlatformClientMock(t)
+	platformClient.OnGetUserGroups(testEmail).TypedReturns([]string{"supplier"}, nil)
+
+	a, err := NewPortalAPI(&testPortal, platformClient)
 	require.NoError(t, err)
 
 	srv := httptest.NewServer(a)
@@ -479,7 +478,6 @@ func TestPortalAPI_Router_listAPIs(t *testing.T) {
 	require.NoError(t, err)
 
 	req.Header.Add("Hub-Email", testEmail)
-	req.Header.Add("Hub-Groups", "supplier")
 
 	resp, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
@@ -511,14 +509,19 @@ func TestPortalAPI_Router_listAPIs(t *testing.T) {
 }
 
 func TestPortalAPI_Router_listAPIs_noAPIsAndCollections(t *testing.T) {
+	platformClient := newPlatformClientMock(t)
+	platformClient.OnGetUserGroups(testEmail).TypedReturns([]string{"supplier"}, nil)
+
 	var p portal
-	a, err := NewPortalAPI(&p, nil)
+	a, err := NewPortalAPI(&p, platformClient)
 	require.NoError(t, err)
 
 	srv := httptest.NewServer(a)
 
 	req, err := http.NewRequest(http.MethodGet, srv.URL+"/apis", http.NoBody)
 	require.NoError(t, err)
+
+	req.Header.Add("Hub-Email", testEmail)
 
 	resp, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
@@ -590,7 +593,10 @@ func TestPortalAPI_Router_getCollectionAPISpec(t *testing.T) {
 				}
 			}))
 
-			a, err := NewPortalAPI(&testPortal, nil)
+			platformClient := newPlatformClientMock(t)
+			platformClient.OnGetUserGroups(testEmail).TypedReturns([]string{"supplier"}, nil)
+
+			a, err := NewPortalAPI(&testPortal, platformClient)
 			require.NoError(t, err)
 			a.httpClient = buildProxyClient(t, svcSrv.URL)
 
@@ -601,7 +607,6 @@ func TestPortalAPI_Router_getCollectionAPISpec(t *testing.T) {
 			require.NoError(t, err)
 
 			req.Header.Add("Hub-Email", testEmail)
-			req.Header.Add("Hub-Groups", "supplier")
 
 			resp, err := http.DefaultClient.Do(req)
 			require.NoError(t, err)
@@ -755,7 +760,10 @@ func TestPortalAPI_Router_getCollectionAPISpec_overrideServerAndAuth(t *testing.
 		test := test
 
 		t.Run(test.desc, func(t *testing.T) {
-			a, err := NewPortalAPI(&test.portal, nil)
+			platformClient := newPlatformClientMock(t)
+			platformClient.OnGetUserGroups(testEmail).TypedReturns([]string{"supplier"}, nil)
+
+			a, err := NewPortalAPI(&test.portal, platformClient)
 			require.NoError(t, err)
 			a.httpClient = http.DefaultClient
 
@@ -765,7 +773,6 @@ func TestPortalAPI_Router_getCollectionAPISpec_overrideServerAndAuth(t *testing.
 			require.NoError(t, err)
 
 			req.Header.Add("Hub-Email", testEmail)
-			req.Header.Add("Hub-Groups", "supplier")
 
 			resp, err := http.DefaultClient.Do(req)
 			require.NoError(t, err)
@@ -839,7 +846,11 @@ func TestPortalAPI_Router_getAPISpec(t *testing.T) {
 					rw.WriteHeader(http.StatusInternalServerError)
 				}
 			}))
-			a, err := NewPortalAPI(&testPortal, nil)
+
+			platformClient := newPlatformClientMock(t)
+			platformClient.OnGetUserGroups(testEmail).TypedReturns([]string{"supplier"}, nil)
+
+			a, err := NewPortalAPI(&testPortal, platformClient)
 			require.NoError(t, err)
 			a.httpClient = buildProxyClient(t, svcSrv.URL)
 
@@ -849,7 +860,6 @@ func TestPortalAPI_Router_getAPISpec(t *testing.T) {
 			require.NoError(t, err)
 
 			req.Header.Add("Hub-Email", testEmail)
-			req.Header.Add("Hub-Groups", "supplier")
 
 			resp, err := http.DefaultClient.Do(req)
 			require.NoError(t, err)
@@ -899,7 +909,10 @@ func TestPortalAPI_Router_getAPISpec_overrideServerAndAuth(t *testing.T) {
 		},
 	}
 
-	a, err := NewPortalAPI(&p, nil)
+	platformClient := newPlatformClientMock(t)
+	platformClient.OnGetUserGroups(testEmail).TypedReturns([]string{"supplier"}, nil)
+
+	a, err := NewPortalAPI(&p, platformClient)
 	require.NoError(t, err)
 	a.httpClient = http.DefaultClient
 
@@ -910,7 +923,6 @@ func TestPortalAPI_Router_getAPISpec_overrideServerAndAuth(t *testing.T) {
 	require.NoError(t, err)
 
 	req.Header.Add("Hub-Email", testEmail)
-	req.Header.Add("Hub-Groups", "supplier")
 
 	resp, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)

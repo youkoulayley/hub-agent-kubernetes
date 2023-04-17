@@ -355,15 +355,14 @@ func (w *WatcherPortal) upsertPortalACP(ctx context.Context, portal *hubv1alpha1
 				ClientID:    hubACPConfig.ClientID,
 				Scopes:      []string{"openid", "offline_access"},
 				Session: &hubv1alpha1.Session{
-					Refresh: pointer.Bool(true),
+					Refresh: pointer.Bool(false),
 				},
 				Secret: &corev1.SecretReference{
 					Name:      acpName,
 					Namespace: w.config.AgentNamespace,
 				},
 				ForwardHeaders: map[string]string{
-					"Hub-Groups": "groups",
-					"Hub-Email":  "sub",
+					"Hub-Email": "sub",
 				},
 			},
 		},

@@ -225,6 +225,10 @@ func (_c *platformClientCreateUserTokenCall) OnDeleteUserToken(userEmail string,
 	return _c.Parent.OnDeleteUserToken(userEmail, tokenName)
 }
 
+func (_c *platformClientCreateUserTokenCall) OnGetUserGroups(userEmail string) *platformClientGetUserGroupsCall {
+	return _c.Parent.OnGetUserGroups(userEmail)
+}
+
 func (_c *platformClientCreateUserTokenCall) OnListUserTokens(userEmail string) *platformClientListUserTokensCall {
 	return _c.Parent.OnListUserTokens(userEmail)
 }
@@ -239,6 +243,10 @@ func (_c *platformClientCreateUserTokenCall) OnCreateUserTokenRaw(userEmail inte
 
 func (_c *platformClientCreateUserTokenCall) OnDeleteUserTokenRaw(userEmail interface{}, tokenName interface{}) *platformClientDeleteUserTokenCall {
 	return _c.Parent.OnDeleteUserTokenRaw(userEmail, tokenName)
+}
+
+func (_c *platformClientCreateUserTokenCall) OnGetUserGroupsRaw(userEmail interface{}) *platformClientGetUserGroupsCall {
+	return _c.Parent.OnGetUserGroupsRaw(userEmail)
 }
 
 func (_c *platformClientCreateUserTokenCall) OnListUserTokensRaw(userEmail interface{}) *platformClientListUserTokensCall {
@@ -341,6 +349,10 @@ func (_c *platformClientDeleteUserTokenCall) OnDeleteUserToken(userEmail string,
 	return _c.Parent.OnDeleteUserToken(userEmail, tokenName)
 }
 
+func (_c *platformClientDeleteUserTokenCall) OnGetUserGroups(userEmail string) *platformClientGetUserGroupsCall {
+	return _c.Parent.OnGetUserGroups(userEmail)
+}
+
 func (_c *platformClientDeleteUserTokenCall) OnListUserTokens(userEmail string) *platformClientListUserTokensCall {
 	return _c.Parent.OnListUserTokens(userEmail)
 }
@@ -357,11 +369,139 @@ func (_c *platformClientDeleteUserTokenCall) OnDeleteUserTokenRaw(userEmail inte
 	return _c.Parent.OnDeleteUserTokenRaw(userEmail, tokenName)
 }
 
+func (_c *platformClientDeleteUserTokenCall) OnGetUserGroupsRaw(userEmail interface{}) *platformClientGetUserGroupsCall {
+	return _c.Parent.OnGetUserGroupsRaw(userEmail)
+}
+
 func (_c *platformClientDeleteUserTokenCall) OnListUserTokensRaw(userEmail interface{}) *platformClientListUserTokensCall {
 	return _c.Parent.OnListUserTokensRaw(userEmail)
 }
 
 func (_c *platformClientDeleteUserTokenCall) OnSuspendUserTokenRaw(userEmail interface{}, tokenName interface{}, suspend interface{}) *platformClientSuspendUserTokenCall {
+	return _c.Parent.OnSuspendUserTokenRaw(userEmail, tokenName, suspend)
+}
+
+func (_m *platformClientMock) GetUserGroups(_ context.Context, userEmail string) ([]string, error) {
+	_ret := _m.Called(userEmail)
+
+	if _rf, ok := _ret.Get(0).(func(string) ([]string, error)); ok {
+		return _rf(userEmail)
+	}
+
+	_ra0, _ := _ret.Get(0).([]string)
+	_rb1 := _ret.Error(1)
+
+	return _ra0, _rb1
+}
+
+func (_m *platformClientMock) OnGetUserGroups(userEmail string) *platformClientGetUserGroupsCall {
+	return &platformClientGetUserGroupsCall{Call: _m.Mock.On("GetUserGroups", userEmail), Parent: _m}
+}
+
+func (_m *platformClientMock) OnGetUserGroupsRaw(userEmail interface{}) *platformClientGetUserGroupsCall {
+	return &platformClientGetUserGroupsCall{Call: _m.Mock.On("GetUserGroups", userEmail), Parent: _m}
+}
+
+type platformClientGetUserGroupsCall struct {
+	*mock.Call
+	Parent *platformClientMock
+}
+
+func (_c *platformClientGetUserGroupsCall) Panic(msg string) *platformClientGetUserGroupsCall {
+	_c.Call = _c.Call.Panic(msg)
+	return _c
+}
+
+func (_c *platformClientGetUserGroupsCall) Once() *platformClientGetUserGroupsCall {
+	_c.Call = _c.Call.Once()
+	return _c
+}
+
+func (_c *platformClientGetUserGroupsCall) Twice() *platformClientGetUserGroupsCall {
+	_c.Call = _c.Call.Twice()
+	return _c
+}
+
+func (_c *platformClientGetUserGroupsCall) Times(i int) *platformClientGetUserGroupsCall {
+	_c.Call = _c.Call.Times(i)
+	return _c
+}
+
+func (_c *platformClientGetUserGroupsCall) WaitUntil(w <-chan time.Time) *platformClientGetUserGroupsCall {
+	_c.Call = _c.Call.WaitUntil(w)
+	return _c
+}
+
+func (_c *platformClientGetUserGroupsCall) After(d time.Duration) *platformClientGetUserGroupsCall {
+	_c.Call = _c.Call.After(d)
+	return _c
+}
+
+func (_c *platformClientGetUserGroupsCall) Run(fn func(args mock.Arguments)) *platformClientGetUserGroupsCall {
+	_c.Call = _c.Call.Run(fn)
+	return _c
+}
+
+func (_c *platformClientGetUserGroupsCall) Maybe() *platformClientGetUserGroupsCall {
+	_c.Call = _c.Call.Maybe()
+	return _c
+}
+
+func (_c *platformClientGetUserGroupsCall) TypedReturns(a []string, b error) *platformClientGetUserGroupsCall {
+	_c.Call = _c.Return(a, b)
+	return _c
+}
+
+func (_c *platformClientGetUserGroupsCall) ReturnsFn(fn func(string) ([]string, error)) *platformClientGetUserGroupsCall {
+	_c.Call = _c.Return(fn)
+	return _c
+}
+
+func (_c *platformClientGetUserGroupsCall) TypedRun(fn func(string)) *platformClientGetUserGroupsCall {
+	_c.Call = _c.Call.Run(func(args mock.Arguments) {
+		_userEmail := args.String(0)
+		fn(_userEmail)
+	})
+	return _c
+}
+
+func (_c *platformClientGetUserGroupsCall) OnCreateUserToken(userEmail string, tokenName string) *platformClientCreateUserTokenCall {
+	return _c.Parent.OnCreateUserToken(userEmail, tokenName)
+}
+
+func (_c *platformClientGetUserGroupsCall) OnDeleteUserToken(userEmail string, tokenName string) *platformClientDeleteUserTokenCall {
+	return _c.Parent.OnDeleteUserToken(userEmail, tokenName)
+}
+
+func (_c *platformClientGetUserGroupsCall) OnGetUserGroups(userEmail string) *platformClientGetUserGroupsCall {
+	return _c.Parent.OnGetUserGroups(userEmail)
+}
+
+func (_c *platformClientGetUserGroupsCall) OnListUserTokens(userEmail string) *platformClientListUserTokensCall {
+	return _c.Parent.OnListUserTokens(userEmail)
+}
+
+func (_c *platformClientGetUserGroupsCall) OnSuspendUserToken(userEmail string, tokenName string, suspend bool) *platformClientSuspendUserTokenCall {
+	return _c.Parent.OnSuspendUserToken(userEmail, tokenName, suspend)
+}
+
+func (_c *platformClientGetUserGroupsCall) OnCreateUserTokenRaw(userEmail interface{}, tokenName interface{}) *platformClientCreateUserTokenCall {
+	return _c.Parent.OnCreateUserTokenRaw(userEmail, tokenName)
+}
+
+func (_c *platformClientGetUserGroupsCall) OnDeleteUserTokenRaw(userEmail interface{}, tokenName interface{}) *platformClientDeleteUserTokenCall {
+	return _c.Parent.OnDeleteUserTokenRaw(userEmail, tokenName)
+}
+
+func (_c *platformClientGetUserGroupsCall) OnGetUserGroupsRaw(userEmail interface{}) *platformClientGetUserGroupsCall {
+	return _c.Parent.OnGetUserGroupsRaw(userEmail)
+}
+
+func (_c *platformClientGetUserGroupsCall) OnListUserTokensRaw(userEmail interface{}) *platformClientListUserTokensCall {
+	return _c.Parent.OnListUserTokensRaw(userEmail)
+}
+
+func (_c *platformClientGetUserGroupsCall) OnSuspendUserTokenRaw(userEmail interface{}, tokenName interface{}, suspend interface{}) *platformClientSuspendUserTokenCall {
 	return _c.Parent.OnSuspendUserTokenRaw(userEmail, tokenName, suspend)
 }
 
@@ -457,6 +597,10 @@ func (_c *platformClientListUserTokensCall) OnDeleteUserToken(userEmail string, 
 	return _c.Parent.OnDeleteUserToken(userEmail, tokenName)
 }
 
+func (_c *platformClientListUserTokensCall) OnGetUserGroups(userEmail string) *platformClientGetUserGroupsCall {
+	return _c.Parent.OnGetUserGroups(userEmail)
+}
+
 func (_c *platformClientListUserTokensCall) OnListUserTokens(userEmail string) *platformClientListUserTokensCall {
 	return _c.Parent.OnListUserTokens(userEmail)
 }
@@ -471,6 +615,10 @@ func (_c *platformClientListUserTokensCall) OnCreateUserTokenRaw(userEmail inter
 
 func (_c *platformClientListUserTokensCall) OnDeleteUserTokenRaw(userEmail interface{}, tokenName interface{}) *platformClientDeleteUserTokenCall {
 	return _c.Parent.OnDeleteUserTokenRaw(userEmail, tokenName)
+}
+
+func (_c *platformClientListUserTokensCall) OnGetUserGroupsRaw(userEmail interface{}) *platformClientGetUserGroupsCall {
+	return _c.Parent.OnGetUserGroupsRaw(userEmail)
 }
 
 func (_c *platformClientListUserTokensCall) OnListUserTokensRaw(userEmail interface{}) *platformClientListUserTokensCall {
@@ -574,6 +722,10 @@ func (_c *platformClientSuspendUserTokenCall) OnDeleteUserToken(userEmail string
 	return _c.Parent.OnDeleteUserToken(userEmail, tokenName)
 }
 
+func (_c *platformClientSuspendUserTokenCall) OnGetUserGroups(userEmail string) *platformClientGetUserGroupsCall {
+	return _c.Parent.OnGetUserGroups(userEmail)
+}
+
 func (_c *platformClientSuspendUserTokenCall) OnListUserTokens(userEmail string) *platformClientListUserTokensCall {
 	return _c.Parent.OnListUserTokens(userEmail)
 }
@@ -588,6 +740,10 @@ func (_c *platformClientSuspendUserTokenCall) OnCreateUserTokenRaw(userEmail int
 
 func (_c *platformClientSuspendUserTokenCall) OnDeleteUserTokenRaw(userEmail interface{}, tokenName interface{}) *platformClientDeleteUserTokenCall {
 	return _c.Parent.OnDeleteUserTokenRaw(userEmail, tokenName)
+}
+
+func (_c *platformClientSuspendUserTokenCall) OnGetUserGroupsRaw(userEmail interface{}) *platformClientGetUserGroupsCall {
+	return _c.Parent.OnGetUserGroupsRaw(userEmail)
 }
 
 func (_c *platformClientSuspendUserTokenCall) OnListUserTokensRaw(userEmail interface{}) *platformClientListUserTokensCall {
