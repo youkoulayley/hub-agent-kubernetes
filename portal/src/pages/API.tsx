@@ -22,16 +22,6 @@ import SwaggerUI from 'swagger-ui-react'
 import { AugmentedLayoutPlugin } from 'components/layouts/AugmentedLayout'
 import { getInjectedValues } from 'utils/getInjectedValues'
 
-// const requestInterceptor = (req) => {
-//   const token = localStorage.getItem('token')
-//   return {
-//     ...req,
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   }
-// }
-
 const API = () => {
   const { portalName } = getInjectedValues()
   const { apiName, collectionName } = useParams()

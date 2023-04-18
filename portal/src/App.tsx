@@ -37,16 +37,6 @@ const bodyGlobalStyle = globalCss({
   },
 })
 
-// const PrivateRoute = ({ children }: { children: JSX.Element }): JSX.Element => {
-//   const { isLoggedIn } = useAuthState()
-
-//   if (!isLoggedIn) {
-//     return <Navigate to="/login" />
-//   }
-
-//   return <PageLayout>{children}</PageLayout>
-// }
-
 const Routes = () => {
   const { data: apis } = useAPIs()
 

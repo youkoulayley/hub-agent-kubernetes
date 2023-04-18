@@ -32,21 +32,12 @@ export const handlers = [
         },
       }),
     )
-
-    /* To mock fail request*/
-
-    // return res(
-    //   ctx.status(401),
-    //   ctx.json({
-    //     errorMessage: 'Unauthorized',
-    //   }),
-    // )
   }),
 
   rest.get('/api/:portalName/apis', (req, res, ctx) => {
-    // const headers = req.headers
-    // if (headers.get('Authorization')) {
     return res(
+      // ctx.status(302),
+      // ctx.set('Location', 'https://sso.portal.hub-preview.traefik.io'),
       ctx.status(200),
       ctx.json({
         collections: [
@@ -79,101 +70,34 @@ export const handlers = [
         apis: [{ name: 'my-petstore-api', specLink: '/apis/my-petstore-api@petstore', pathPrefix: '/api' }],
       }),
     )
-    // } else {
-    //   return res(
-    //     ctx.status(401),
-    //     ctx.json({
-    //       errorMessage: 'Unauthorized',
-    //     }),
-    //   )
-    // }
   }),
 
   rest.get('/api/:portalName/apis/:apiName', (req, res, ctx) => {
-    // const headers = req.headers
-    // if (headers.get('Authorization')) {
     return res(ctx.status(200), ctx.json(api))
-    // } else {
-    //   return res(
-    //     ctx.status(401),
-    //     ctx.json({
-    //       errorMessage: 'Unauthorized',
-    //     }),
-    //   )
-    // }
+    // return res(ctx.status(302), ctx.set('Location', 'https://sso.portal.hub-preview.traefik.io'))
   }),
 
   rest.get('/api/:portalName/collections/:collectionName/apis/:apiName', (req, res, ctx) => {
-    // const headers = req.headers
-    // if (headers.get('Authorization')) {
     return res(ctx.status(200), ctx.json(collectionApi))
-    // } else {
-    //   return res(
-    //     ctx.status(401),
-    //     ctx.json({
-    //       errorMessage: 'Unauthorized',
-    //     }),
-    //   )
-    // }
   }),
 
   rest.get('/api/:portalName/tokens', async (_, res, ctx) => {
-    // const headers = req.headers
-    // if (headers.get('Authorization')) {
     await waitAsync(1)
     return res(ctx.status(200), ctx.json(tokens))
-    // } else {
-    //   return res(
-    //     ctx.status(401),
-    //     ctx.json({
-    //       errorMessage: 'Unauthorized',
-    //     }),
-    //   )
-    // }
   }),
 
   rest.post('/api/:portalName/tokens', async (_, res, ctx) => {
-    // const headers = req.headers
-    // if (headers.get('Authorization')) {
     await waitAsync(1)
     return res(ctx.status(200), ctx.json({ token: `${+new Date()}` }))
-    // } else {
-    //   return res(
-    //     ctx.status(401),
-    //     ctx.json({
-    //       errorMessage: 'Unauthorized',
-    //     }),
-    //   )
-    // }
   }),
 
   rest.post('/api/:portalName/tokens/suspend', async (_, res, ctx) => {
-    // const headers = req.headers
-    // if (headers.get('Authorization')) {
     await waitAsync(1)
     return res(ctx.status(200))
-    // } else {
-    //   return res(
-    //     ctx.status(401),
-    //     ctx.json({
-    //       errorMessage: 'Unauthorized',
-    //     }),
-    //   )
-    // }
   }),
 
   rest.delete('/api/:portalName/tokens', async (_, res, ctx) => {
-    // const headers = req.headers
-    // if (headers.get('Authorization')) {
     await waitAsync(1)
     return res(ctx.status(204))
-    // } else {
-    //   return res(
-    //     ctx.status(401),
-    //     ctx.json({
-    //       errorMessage: 'Unauthorized',
-    //     }),
-    //   )
-    // }
   }),
 ]
