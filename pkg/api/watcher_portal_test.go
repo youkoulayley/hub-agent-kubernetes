@@ -20,6 +20,8 @@ package api
 import (
 	"bytes"
 	"context"
+	"errors"
+	"io"
 	"os"
 	"sort"
 	"testing"
@@ -316,7 +318,11 @@ func loadFixtures[T any](t *testing.T, path string) []T {
 
 	for {
 		var object T
-		if decoder.Decode(&object) != nil {
+		if err = decoder.Decode(&object); err != nil {
+			if !errors.Is(err, io.EOF) {
+				t.Log(err.Error())
+				t.FailNow()
+			}
 			break
 		}
 

@@ -8,6 +8,7 @@ spec:
   apiAccesses:
     - products
     - supply-chain
+    - admin
   customDomains:
     - "api.hello.example.com"
     - "api.welcome.example.com"
@@ -19,4 +20,4 @@ status:
     - api.hello.example.com
     - api.welcome.example.com
   urls: "https://api.hello.example.com,https://api.welcome.example.com,https://brave-lion-123.hub-traefik.io"
-  hash: "FJWzP5UcdSqx4zETjJ4PEA=="
+  hash: "kMTuZBCWmDuE1BBEZ7XY7Q=="

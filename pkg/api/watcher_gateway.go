@@ -49,6 +49,7 @@ import (
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/tools/record"
 	"k8s.io/utils/pointer"
+	"k8s.io/utils/strings/slices"
 )
 
 const (
@@ -461,18 +462,17 @@ func (w *WatcherGateway) syncChildResources(ctx context.Context, gateway *hubv1a
 }
 
 type resolvedAPI struct {
-	groups string
+	groups []string
 	api    *hubv1alpha1.API
 }
 
 func (w *WatcherGateway) apisByNamespace(ctx context.Context, gateway *hubv1alpha1.APIGateway) (map[string][]resolvedAPI, error) {
-	var resolvedAPIs []resolvedAPI
+	resolvedAPIs := make(map[string]*resolvedAPI)
 	for _, accessName := range gateway.Spec.APIAccesses {
 		access, err := w.hubClientSet.HubV1alpha1().APIAccesses().Get(ctx, accessName, metav1.GetOptions{})
 		if err != nil && kerror.IsNotFound(err) {
 			continue
 		}
-
 		if err != nil {
 			return nil, fmt.Errorf("get access: %w", err)
 		}
@@ -482,11 +482,7 @@ func (w *WatcherGateway) apisByNamespace(ctx context.Context, gateway *hubv1alph
 			return nil, fmt.Errorf("find APIs: %w", err)
 		}
 
-		sort.Strings(access.Spec.Groups)
-		groups := strings.Join(access.Spec.Groups, ",")
-		for _, api := range apis {
-			resolvedAPIs = append(resolvedAPIs, resolvedAPI{groups: groups, api: api})
-		}
+		mergeResolvedAPIs(resolvedAPIs, access, nil, apis)
 
 		collections, err := w.findCollections(access.Spec.APICollectionSelector)
 		if err != nil {
@@ -494,30 +490,56 @@ func (w *WatcherGateway) apisByNamespace(ctx context.Context, gateway *hubv1alph
 		}
 
 		for _, collection := range collections {
-			collectionAPIs, err := w.findAPIs(&collection.Spec.APISelector)
+			apis, err = w.findAPIs(&collection.Spec.APISelector)
 			if err != nil {
 				return nil, fmt.Errorf("find APIs: %w", err)
 			}
 
-			for _, collectionAPI := range collectionAPIs {
-				if collection.Spec.PathPrefix == "" {
-					resolvedAPIs = append(resolvedAPIs, resolvedAPI{groups: groups, api: collectionAPI})
-					continue
-				}
-
-				api := *collectionAPI
-				api.Spec.PathPrefix = path.Join(collection.Spec.PathPrefix, api.Spec.PathPrefix)
-				resolvedAPIs = append(resolvedAPIs, resolvedAPI{groups: groups, api: &api})
-			}
+			mergeResolvedAPIs(resolvedAPIs, access, collection, apis)
 		}
 	}
 
 	apisByNamespace := make(map[string][]resolvedAPI)
 	for _, api := range resolvedAPIs {
-		apisByNamespace[api.api.Namespace] = append(apisByNamespace[api.api.Namespace], api)
+		apisByNamespace[api.api.Namespace] = append(apisByNamespace[api.api.Namespace], *api)
 	}
 
 	return apisByNamespace, nil
+}
+
+func resolvedAPIKey(collection *hubv1alpha1.APICollection, api *hubv1alpha1.API) string {
+	if collection == nil {
+		return api.Name + "@" + api.Namespace
+	}
+
+	return collection.Name + "@" + api.Name + "@" + api.Namespace
+}
+
+func addGroups(oldGroups, newGroups []string) []string {
+	for _, newGroup := range newGroups {
+		if !slices.Contains(oldGroups, newGroup) {
+			oldGroups = append(oldGroups, newGroup)
+		}
+	}
+
+	return oldGroups
+}
+
+func mergeResolvedAPIs(resolvedAPIs map[string]*resolvedAPI, access *hubv1alpha1.APIAccess, collection *hubv1alpha1.APICollection, apis []*hubv1alpha1.API) {
+	for _, api := range apis {
+		key := resolvedAPIKey(collection, api)
+		if _, ok := resolvedAPIs[key]; ok {
+			resolvedAPIs[key].groups = addGroups(resolvedAPIs[key].groups, access.Spec.Groups)
+			continue
+		}
+
+		a := *api
+		if collection != nil && collection.Spec.PathPrefix != "" {
+			a.Spec.PathPrefix = path.Join(collection.Spec.PathPrefix, a.Spec.PathPrefix)
+		}
+
+		resolvedAPIs[key] = &resolvedAPI{api: &a, groups: access.Spec.Groups}
+	}
 }
 
 func (w *WatcherGateway) findAPIs(selector *metav1.LabelSelector) ([]*hubv1alpha1.API, error) {
@@ -780,7 +802,10 @@ func (w *WatcherGateway) upsertIngressesOnNamespace(ctx context.Context, namespa
 
 	apisByGroups := make(map[string][]*hubv1alpha1.API)
 	for _, a := range resolvedAPIs {
-		apisByGroups[a.groups] = append(apisByGroups[a.groups], a.api)
+		sort.Strings(a.groups)
+		groups := strings.Join(a.groups, ",")
+
+		apisByGroups[groups] = append(apisByGroups[groups], a.api)
 	}
 
 	ingressUpserted := make(map[string]struct{})
